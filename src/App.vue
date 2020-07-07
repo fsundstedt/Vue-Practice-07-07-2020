@@ -1,28 +1,49 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <main>
+      <div v-if="typeof data.Global != 'undefined'">
+        <div>
+          Total confirmed cases: {{ data.Global.TotalConfirmed }}
+        </div>
+        <div>
+          Total deaths: {{ data.Global.TotalDeaths }}
+        </div>
+                <div>
+          Mortality Rate: {{ (data.Global.TotalDeaths/data.Global.TotalConfirmed * 100).toFixed(2) + '%' }}
+        </div>
+      </div>
+        {{ data.Global }}
+    </main>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data () {
+    return {
+      url: 'https://api.covid19api.com/summary',
+      query: '',
+      data: {}
+    }
+  },
+  methods: {
+    fetchData () {
+      fetch(`${this.url}`)
+      .then(res => {
+        return res.json();
+      }).then(this.setResults);
+    },
+    setResults (results) {
+      this.data = results;
+    }
+  },
+  beforeMount() {
+    this.fetchData()
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
